@@ -11,7 +11,6 @@ describe Language do
       Language.create!(name: "Java")
 
       lambda { Language.create!(name: "Java") }.should raise_error
-      puts Language.count
     end
   end
 end
