@@ -1,4 +1,7 @@
 Sourceradar::Application.routes.draw do
+  resources :rules
+
+
   resources :languages
 
 
