@@ -23,7 +23,7 @@ describe RulesController do
   # This should return the minimal set of attributes required to create a valid
   # Rule. As you add validations to Rule, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) { { keyword: "test", description: "test", language_id: FactoryGirl.create(:language).id.to_s } }
+  let(:valid_attributes) { { expression: "test", description: "test", language_id: FactoryGirl.create(:language).id.to_s } }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
