@@ -13,7 +13,7 @@
 <% @rules.each do |rule| %>
   <tr>
     <td><%= rule.language.name %></td>
-    <td><%= rule.keyword %></td>
+    <td><%= rule.expression %></td>
     <td><%= rule.description %></td>
     <td><%= link_to 'Show', rule %></td>
     <td><%= link_to 'Edit', edit_rule_path(rule) %></td>

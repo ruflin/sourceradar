@@ -8,12 +8,12 @@ describe "rules/index" do
     assign(:rules, [
       stub_model(Rule,
         :language => language,
-        :keyword => "",
+        :expression => "",
         :description => "Description"
       ),
       stub_model(Rule,
         :language => FactoryGirl.create(:language, :another),
-        :keyword => "",
+        :expression => "",
         :description => "Description"
       )
     ])
