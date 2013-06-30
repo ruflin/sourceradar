@@ -5,7 +5,9 @@ describe "rules/new" do
     assign(:rule, stub_model(Rule,
       :language_id => FactoryGirl.create(:language).id,
       :expression => "",
-      :description => "MyString"
+      :description => "MyString",
+      :technicalnote => "Tech note",
+      :businessnote => "Biz note"
     ).as_new_record)
   end
 
@@ -17,6 +19,8 @@ describe "rules/new" do
       assert_select "select#rule_language_id[name=?]", "rule[language_id]"
       assert_select "input#rule_expression[name=?]", "rule[expression]"
       assert_select "textarea#rule_description[name=?]", "rule[description]"
+      assert_select "textarea#rule_technicalnote[name=?]", "rule[technicalnote]"
+      assert_select "textarea#rule_businessnote[name=?]", "rule[businessnote]"
     end
   end
 end

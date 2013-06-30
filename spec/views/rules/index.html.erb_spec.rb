@@ -9,12 +9,16 @@ describe "rules/index" do
       stub_model(Rule,
         :language => language,
         :expression => "",
-        :description => "Description"
+        :description => "Description",
+        :technicalnote => "Tech note",
+        :businessnote => "Biz note"
       ),
       stub_model(Rule,
         :language => FactoryGirl.create(:language, :another),
         :expression => "",
-        :description => "Description"
+        :description => "Description",
+        :technicalnote => "Tech note",
+        :businessnote => "Biz note"
       )
     ])
   end

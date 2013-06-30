@@ -5,7 +5,9 @@ describe "rules/show" do
     @rule = assign(:rule, stub_model(Rule,
       :language_id => FactoryGirl.create(:language).id,
       :expression => "",
-      :description => "Description"
+      :description => "Description",
+      :technicalnote => "Tech note",
+      :businessnote => "Biz note"
     ))
   end
 
