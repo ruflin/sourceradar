@@ -21,6 +21,11 @@ describe Rule do
       Rule.create(expression: "test", description: "test", language_id: FactoryGirl.create(:language, :another).id)
       Rule.new(expression: "test", description: "blubb", language_id: language_id).should be_valid
     end
+
+    it "should create a rule with valid parameters" do
+      Rule.new(expression: "test", description: "abc", language_id: language_id, businessnote: "Business", technicalnote: "Technical").should be_valid
+    end
+
   end
 
 end
