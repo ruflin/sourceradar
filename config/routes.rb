@@ -1,4 +1,9 @@
 Sourceradar::Application.routes.draw do
+
+
+  root :to => 'pages#home'
+  match '/report',  to: 'pages#report',           via: 'post'
+
   resources :rules
 
 

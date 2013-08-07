@@ -1,0 +1,6 @@
+<%= form_tag :action => 'report'%>
+  <p><label for="repository_link">Repository url</label>:<br />
+  <%= text_field :pages, :link %><br />
+   <p><label for="branch_name">Branch name</label>:<br />
+  <%= text_field :pages, :branch %><br />
+  <%= submit_tag "Submit" %>

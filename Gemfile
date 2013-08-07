@@ -10,6 +10,8 @@ gem 'sqlite3'
 group :development, :test do
   gem 'rspec-rails', '~> 2.0'
   gem "factory_girl_rails", "~> 4.0"
+  gem 'capybara', '2.1.0'
+  gem 'mocha', '0.14.0'
 end
 
 # Gems used only for assets and not required
@@ -25,6 +27,8 @@ group :assets do
 end
 
 gem 'jquery-rails'
+gem "httparty", "~> 0.11.0"
+gem "grit", "~> 2.5.0"
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
