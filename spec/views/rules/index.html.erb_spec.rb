@@ -2,19 +2,15 @@ require 'spec_helper'
 
 describe "rules/index" do
 
-  let(:language) { FactoryGirl.create(:language) }
-
   before(:each) do
     assign(:rules, [
       stub_model(Rule,
-        :language => language,
         :expression => "",
         :description => "Description",
         :technicalnote => "Tech note",
         :businessnote => "Biz note"
       ),
       stub_model(Rule,
-        :language => FactoryGirl.create(:language, :another),
         :expression => "",
         :description => "Description",
         :technicalnote => "Tech note",
@@ -29,6 +25,5 @@ describe "rules/index" do
     assert_select "tr>td", :text => "".to_s, :count => 2
     assert_select "tr>td", :text => "".to_s, :count => 2
     assert_select "tr>td", :text => "Description".to_s, :count => 2
-    assert_select "tr>td", :text => language.name
   end
 end

@@ -23,7 +23,8 @@ describe RulesController do
   # This should return the minimal set of attributes required to create a valid
   # Rule. As you add validations to Rule, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) { { expression: "test", description: "test", language_id: FactoryGirl.create(:language).id.to_s } }
+  let(:valid_attributes) { { expression: "test", description: "test"} }
+  let(:invalid_attributes) { { description: "test"} }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
@@ -85,8 +86,8 @@ describe RulesController do
       it "assigns a newly created but unsaved rule as @rule" do
         # Trigger the behavior that occurs when invalid params are submitted
         Rule.any_instance.stub(:save).and_return(false)
-        post :create, {:rule => valid_attributes }, valid_session
-        assigns(:rule).should be_a_new(Rule)
+        post :create, {:rule => invalid_attributes }, valid_session
+        assigns(:rule).should_not be_a_new(Rule)
       end
 
       it "re-renders the 'new' template" do
