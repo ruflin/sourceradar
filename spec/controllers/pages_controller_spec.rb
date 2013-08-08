@@ -9,11 +9,10 @@ describe PagesController do
     end
   end
 
-  describe "GET 'report'" do
+  describe "POST 'report'" do
     it "returns http success" do
-      get 'report'
+      post 'report'
       response.should be_success
     end
   end
-
 end
