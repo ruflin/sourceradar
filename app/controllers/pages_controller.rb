@@ -3,36 +3,30 @@ class PagesController < ApplicationController
   end
 
   def report
-    if params[:pages][:link].blank?
+
+    if params[:pages].nil? ||  params[:pages][:link].blank?
       @message = "Please provide a URL"
       return
     end
 
-    if is_valid_url?(params[:pages][:link])
-      @message = "Analising repository " +params[:pages][:link]
+    repository_svc = RepositoryService.new(params[:pages][:link], params[:pages][:branch])
+
+    if repository_svc.is_valid_url?
+      @message = "Analising repository"
     else
       @message = "The link you submitted is invalid"
+      return
     end
 
+    @branch = "default"
 
-
-    if params[:pages][:branch].blank?
-      @branch = "Using default branch"
+    if !repository_svc.branch_exists?
+      @message = "The submitted branch doesn't exist"
+      @branch = ""
     else
-      if branch_exists?(params[:pages][:link],params[:pages][:branch])
-        @branch = "Using "+params[:pages][:branch]+" branch"
-      else
-        @branch = "The submitted branch doesn't exist"
-      end
+      @branch = params[:pages][:branch] unless params[:pages][:branch].blank?
     end
   end
 
 
-  def is_valid_url?(url)
-    HTTParty.get(url).code == 200
-  end
-
-  def branch_exists?(url,branch)
-    HTTParty.get(url+"/branches/"+branch).code == 200
-  end
 end
