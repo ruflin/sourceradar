@@ -9,7 +9,7 @@ class PagesController < ApplicationController
     end
 
     if is_valid_url?(params[:pages][:link])
-      @message = "We found 0 files"
+      @message = "Analising repository " +params[:pages][:link]
     else
       @message = "The link you submitted is invalid"
     end

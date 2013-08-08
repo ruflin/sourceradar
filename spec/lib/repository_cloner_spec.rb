@@ -29,10 +29,12 @@ describe Engine::RepositoryCloner do
   end
 
   it "should raise exception with an invalid branch" do
+    grit_stub = double()
+    grit_stub.should_receive(:clone).with({:branch => invalid_branch}, url, dest_path)
+    Grit::Git.should_receive(:new).with(any_args()).and_return(grit_stub)
+
+    Engine::RepositoryCloner.new(url, invalid_branch, dest_path)
 
   end
-
-  #check if the url is valid
-  #see if it throws an error
 
 end
