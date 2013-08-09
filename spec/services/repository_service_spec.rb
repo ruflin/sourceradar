@@ -3,6 +3,7 @@ require 'spec_helper'
 describe RepositoryService do
 
   let(:empty_url) { nil }
+  let(:non_github_url) { "blalalaal" }
   let(:invalid_url) { "https://github.com/centralway/whoopwhoop" }
   let(:valid_url) { "https://github.com/centralway/sourceradar.git" }
   let(:valid_branch) { "development" }
@@ -12,6 +13,7 @@ describe RepositoryService do
 
     let(:repo_with_valid_url) { RepositoryService.new(valid_url, nil) }
     let(:repo_with_invalid_url) { RepositoryService.new(invalid_url, nil) }
+    let(:repo_with_invalid_github_url) { RepositoryService.new(non_github_url, nil) }
 
     it "should return true on valid URL" do
       @valid_response = double().as_null_object
@@ -25,6 +27,13 @@ describe RepositoryService do
       @invalid_response.should_receive(:code).and_return(404)
       HTTParty.should_receive(:get).once.with(invalid_url).and_return(@invalid_response)
       expect(repo_with_invalid_url.is_valid_url?).to be_eql(false)
+    end
+
+    it "should return false on invalid github URL" do
+      @invalid_response = double().as_null_object
+      @invalid_response.should_receive(:code).and_return(404)
+      HTTParty.should_receive(:get).once.with(non_github_url).and_return(@invalid_response)
+      expect(repo_with_invalid_github_url.is_valid_url?).to be_eql(false)
     end
 
   end

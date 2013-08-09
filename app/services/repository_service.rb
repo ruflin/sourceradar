@@ -5,7 +5,10 @@ class RepositoryService
   end
 
  def is_valid_url?
-    HTTParty.get(@url).code == 200
+   HTTParty.get(@url).code == 200
+
+ rescue => e
+
  end
 
   def branch_exists?
