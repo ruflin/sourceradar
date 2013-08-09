@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130630225010) do
+ActiveRecord::Schema.define(:version => 20130808163856) do
 
   create_table "languages", :force => true do |t|
     t.string   "name"
@@ -20,7 +20,6 @@ ActiveRecord::Schema.define(:version => 20130630225010) do
   end
 
   create_table "rules", :force => true do |t|
-    t.integer  "language_id"
     t.string   "expression"
     t.string   "description"
     t.datetime "created_at",    :null => false
