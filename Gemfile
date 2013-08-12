@@ -28,6 +28,7 @@ end
 gem 'jquery-rails'
 gem "httparty", "~> 0.11.0"
 gem "grit", "~> 2.5.0"
+gem 'thin'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

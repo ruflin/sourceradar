@@ -1,6 +1,10 @@
 require 'spec_helper'
+require 'engine'
 
-describe RepositoryService do
+include Engine
+describe Engine::RepositoryService do
+
+
 
   let(:empty_url) { nil }
   let(:non_github_url) { "blalalaal" }
@@ -112,18 +116,6 @@ describe RepositoryService do
       expect(repo_cloner).not_to be_nil
     end
 
-
-  end
-
-  let(:repo_with_valid_url) { RepositoryService.new(valid_url, nil) }
-
-  it "should show the number of files in the working directory" do
-
-
-
-    num_files = repo_with_valid_url.get_number_of_files()
-
-    expect(num_files).to be >= 0
 
   end
 

@@ -4,19 +4,26 @@ include Grit
 module Engine
   class RepositoryCloner
 
-    def initialize(url, branch, working_dir = '/tmp/ponies2')
-      @working_dir = working_dir
-
+    def initialize(user, repository, branch)
+       @user = user
+       @repository = repository
       #if the branch is nil then find the default branch
-      @repo = Grit::Git.new(@working_dir)
+
       if branch.blank?
-        @branch = find_default_branch(url)
+        @branch = find_default_branch()
       else
-       @branch = branch
+        @branch = branch
       end
 
+      @working_dir = '/tmp/'+@repository+'/'+@branch+'/'+Time.now.to_s
+
+      @repo = Grit::Git.new(@working_dir)
+
       #clone repo with the url
-      clone!(url, @branch)
+      clone!()
+
+      #send instance to analysis
+
 
     end
 
@@ -24,22 +31,18 @@ module Engine
       Dir.entries(@working_dir).size
     end
 
-    def find_default_branch(url)
-
-      s_url = url.split('/')
-      user = s_url[3]
-      repository = s_url[4]
-      response = HTTParty.get("https://api.github.com/repos/"+user+"/"+repository)
+    def find_default_branch()
+      response = HTTParty.get("https://api.github.com/repos/"+@user+"/"+@repository)
       response_hash = JSON.parse(response.body)
       response_hash['default_branch']
     end
 
     private
 
-    def clone!(url, branch)
-      @repo.clone({:branch => branch}, url , @working_dir)
+    def clone!()
+      url = 'https://github.com/'+@user+'/'+@repository+'.git'
+      @repo.clone({:branch => @branch}, url , @working_dir)
     end
-
 
 
   end
