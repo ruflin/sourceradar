@@ -113,6 +113,21 @@ describe RepositoryService do
     end
 
 
+  end
+
+  let(:repo_with_valid_url) { RepositoryService.new(valid_url, nil) }
+
+  it "should show the number of files in the working directory" do
+
+
+
+    num_files = repo_with_valid_url.get_number_of_files()
+
+    expect(num_files).to be >= 0
 
   end
+
+
+
+
 end

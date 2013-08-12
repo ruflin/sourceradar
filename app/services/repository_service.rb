@@ -1,17 +1,21 @@
-require_relative '../../lib/engine'
+require 'engine'
+
 
 class RepositoryService
+
+
   def initialize(url, branch = "")
     @url = url
     @branch = branch.to_s
+
   end
 
- def is_valid_url?
-   HTTParty.get(@url).code == 200
+  def is_valid_url?
+    HTTParty.get(@url).code == 200
 
- rescue => e
+  rescue => e
 
- end
+  end
 
   def branch_exists?
     Rails.logger.debug("url:" + @url )
@@ -28,6 +32,13 @@ class RepositoryService
 
   def send_to_engine(url, branch)
     Engine::RepositoryCloner.new(url,branch)
+  end
+
+
+  def get_number_of_files()
+    send_to_engine(@url, @branch).repo_size()
 
   end
+
+
 end

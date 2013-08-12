@@ -27,6 +27,9 @@ class PagesController < ApplicationController
     else
       @branch = params[:pages][:branch] unless params[:pages][:branch].blank?
     end
+
+    @number_files = repository_svc.get_number_of_files()
+
   end
 
 
