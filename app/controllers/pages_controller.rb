@@ -6,6 +6,7 @@ class PagesController < ApplicationController
 
     if params[:pages].nil? ||  params[:pages][:link].blank?
       @message = "Please provide a URL"
+      @branch = ""
       return
     end
 

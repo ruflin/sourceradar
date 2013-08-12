@@ -1,3 +1,5 @@
+require_relative '../../lib/engine'
+
 class RepositoryService
   def initialize(url, branch = "")
     @url = url
@@ -21,5 +23,11 @@ class RepositoryService
 
   def chopUrl(url)
     url.chomp(".git")
+  end
+
+
+  def send_to_engine(url, branch)
+    Engine::RepositoryCloner.new(url,branch)
+
   end
 end
