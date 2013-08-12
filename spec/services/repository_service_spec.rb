@@ -92,7 +92,27 @@ describe RepositoryService do
   end
 
 
-  it "should call the engine to analyze the repo" do
-    pending "The engine should be called when we're at that point"
+
+
+  context "should call the engine to analyse the repo" do
+
+    let(:repo_with_valid_url) { RepositoryService.new(valid_url, nil) }
+
+    it "with valid branch" do
+
+      repo_cloner = repo_with_valid_url.send_to_engine(valid_url, valid_branch)
+
+      expect(repo_cloner).not_to be_nil
+    end
+
+    it "with blank branch" do
+
+      repo_cloner = repo_with_valid_url.send_to_engine(valid_url, nil)
+
+      expect(repo_cloner).not_to be_nil
+    end
+
+
+
   end
 end
