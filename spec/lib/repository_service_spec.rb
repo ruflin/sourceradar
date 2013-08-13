@@ -13,20 +13,31 @@ describe Engine::RepositoryService do
   let(:valid_branch) { "development" }
   let(:invalid_branch) { "thisdoesntexistdude" }
 
+  before { RepositoryCloner.stub(:new).with(any_args).and_return(anything)}
+
   describe "is_valid_url?" do
 
-    let(:repo_with_valid_url) { RepositoryService.new(valid_url, nil) }
-    let(:repo_with_invalid_url) { RepositoryService.new(invalid_url, nil) }
+    let(:repo_with_valid_url) { RepositoryService.new(valid_url, valid_branch) }
+    let(:repo_with_invalid_url) { RepositoryService.new(invalid_url, valid_branch) }
     let(:repo_with_invalid_github_url) { RepositoryService.new(non_github_url, nil) }
 
     it "should return true on valid URL" do
+
+      repo_with_valid_url.stub(:branch_exists?).and_return(true)
+      repo_with_valid_url.stub(:send_to_engine).with(any_args)
+
       @valid_response = double().as_null_object
       @valid_response.should_receive(:code).and_return(200)
-      HTTParty.should_receive(:get).once.with(valid_url).and_return(@valid_response)
+      HTTParty.should_receive(:get).with(valid_url).ordered.and_return(@valid_response)
+
+
+
       expect(repo_with_valid_url.is_valid_url?).to be_eql(true)
     end
 
     it "should return false on invalid URL" do
+      repo_with_invalid_url.stub(:branch_exists?).and_return(true)
+
       @invalid_response = double().as_null_object
       @invalid_response.should_receive(:code).and_return(404)
       HTTParty.should_receive(:get).once.with(invalid_url).and_return(@invalid_response)
@@ -34,10 +45,11 @@ describe Engine::RepositoryService do
     end
 
     it "should return false on invalid github URL" do
+      repo_with_invalid_github_url.stub(:branch_exists?).and_return(true)
       @invalid_response = double().as_null_object
       @invalid_response.should_receive(:code).and_return(404)
       HTTParty.should_receive(:get).once.with(non_github_url).and_return(@invalid_response)
-      expect(repo_with_invalid_github_url.is_valid_url?).to be_eql(false)
+      expect(repo_with_invalid_github_url.is_valid_url?).not_to be_eql(true)
     end
 
   end
@@ -49,9 +61,9 @@ describe Engine::RepositoryService do
     let(:repo_with_empty_branch) { RepositoryService.new(valid_url, nil) }
 
     it "should return true on valid branch" do
-
+      repo_with_valid_branch.stub(:is_valid_url?).and_return(true)
       branch_url = valid_url.chomp('.git') + '/branches/' + valid_branch
-
+      repo_with_valid_branch.stub(:is_valid_url?).and_return(true)
       @valid_response = double().as_null_object
       @valid_response.should_receive(:code).and_return(200)
       HTTParty.should_receive(:get).once.with(branch_url).and_return(@valid_response)
@@ -59,6 +71,7 @@ describe Engine::RepositoryService do
     end
 
     it "should return false on invalid branch" do
+      repo_with_invalid_branch.stub(:is_valid_url?).and_return(true)
       branch_url = valid_url.chomp('.git') + '/branches/' + invalid_branch
       @invalid_response = double().as_null_object
       @invalid_response.should_receive(:code).and_return(404)
@@ -67,7 +80,9 @@ describe Engine::RepositoryService do
     end
 
     it "should return true on empty branch" do
+      repo_with_empty_branch.stub(:is_valid_url?).and_return(true)
       branch_url = valid_url.chomp('.git') + '/branches/'
+      repo_with_empty_branch.stub(:send_to_engine).with(any_args)
       @valid_response = double().as_null_object
       @valid_response.should_receive(:code).and_return(200)
       HTTParty.should_receive(:get).once.with(branch_url).and_return(@valid_response)
@@ -83,12 +98,12 @@ describe Engine::RepositoryService do
     let(:url_without_dot_git) { "blabla" }
 
     subject { RepositoryService.new(url_with_dot_git,nil) }
-    specify do
+    it "should remove .git from the url" do
       expect(subject.chopUrl(url_with_dot_git)).to be_eql(url_without_dot_git)
     end
 
     subject { RepositoryService.new(url_without_dot_git,nil) }
-    specify do
+    it "should not change the url without .git" do
       expect(subject.chopUrl(url_without_dot_git)).to be_eql(url_without_dot_git)
     end
 
@@ -101,17 +116,23 @@ describe Engine::RepositoryService do
   context "should call the engine to analyse the repo" do
 
     let(:repo_with_valid_url) { RepositoryService.new(valid_url, nil) }
+    let(:user) {"centralway"}
+    let(:repository) {"sourceradar"}
 
     it "with valid branch" do
 
-      repo_cloner = repo_with_valid_url.send_to_engine(valid_url, valid_branch)
+      RepositoryCloner.stub(:new).with(any_args).and_return(anything)
+
+      repo_cloner = repo_with_valid_url.send_to_engine(user, repository, valid_branch)
 
       expect(repo_cloner).not_to be_nil
     end
 
     it "with blank branch" do
 
-      repo_cloner = repo_with_valid_url.send_to_engine(valid_url, nil)
+      RepositoryCloner.stub(:new).with(any_args).and_return(anything)
+
+      repo_cloner = repo_with_valid_url.send_to_engine(user, repository, nil)
 
       expect(repo_cloner).not_to be_nil
     end

@@ -20,7 +20,7 @@ module Engine
       get_user_and_repo(url)
       send_to_engine(@user,@repository,branch)
 
-      return 'Analysis for repository '+@repository+ ' in the '+ @branch +'branch.'
+      #return 'Analysis for repository '+@repository+ ' in the '+ @branch +'branch.'
     end
 
     def is_valid_url?
@@ -35,7 +35,6 @@ module Engine
       Rails.logger.debug("branch:" + @branch )
       url_chopped = chopUrl(@url)
       HTTParty.get(url_chopped+"/branches/"+@branch).code == 200  #if the branch is "" it still gives 200
-
     end
 
     def chopUrl(url)
