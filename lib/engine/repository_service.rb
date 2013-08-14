@@ -35,6 +35,8 @@ module Engine
       Rails.logger.debug("branch:" + @branch )
       url_chopped = chop_url(@url)
       HTTParty.get(url_chopped+"/branches/"+@branch).code == 200  #if the branch is "" it still gives 200
+    rescue => e
+      false
     end
 
     def chop_url(url)
