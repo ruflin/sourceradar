@@ -62,14 +62,13 @@ describe Engine::RepositoryService do
 
     it "should return true on valid branch" do
 
-
-
       repo_with_valid_branch.stub(:is_valid_url?).and_return(true)
-      branch_url = valid_url.chomp('.git') + '/branches/' + valid_branch
-      repo_with_valid_branch.stub(:is_valid_url?).and_return(true)
+      branch_url = valid_url.chomp('.git') + '/branches/'
+
       @valid_response = double().as_null_object
       @valid_response.should_receive(:code).and_return(200)
       HTTParty.should_receive(:get).once.with(branch_url).and_return(@valid_response)
+
       expect(repo_with_valid_branch.branch_exists?).to be_eql(true)
     end
 
@@ -82,15 +81,22 @@ describe Engine::RepositoryService do
       expect{repo_with_invalid_branch}.to raise_error("The submitted branch doesn't exist")
     end
 
-    it "should return true on empty branch" do
+    it "should not raise exception from HTTParty" do
       repo_with_empty_branch.stub(:is_valid_url?).and_return(true)
       branch_url = valid_url.chomp('.git') + '/branches/'
       repo_with_empty_branch.stub(:send_to_engine).with(any_args)
-      @valid_response = double().as_null_object
-      @valid_response.should_receive(:code).and_return(200)
-      HTTParty.should_receive(:get).once.with(branch_url).and_return(@valid_response)
-      expect(repo_with_empty_branch.branch_exists?).to be_eql(true)
+      http_mock = HTTParty.stub(:get).and_raise("OH MY GOD!")
+      expect(repo_with_empty_branch.branch_exists?).not_to raise_error
     end
+
+    it "should return false on exception from HTTParty" do
+      repo_with_empty_branch.stub(:is_valid_url?).and_return(true)
+      branch_url = valid_url.chomp('.git') + '/branches/'
+      repo_with_empty_branch.stub(:send_to_engine).with(any_args)
+      http_mock = HTTParty.stub(:get).and_raise("OH MY GOD!")
+      expect(repo_with_empty_branch.branch_exists?).to be_eql(false)
+    end
+
   end
 
 
