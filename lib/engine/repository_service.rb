@@ -10,11 +10,11 @@ module Engine
       puts
       @branch = branch.to_s
       if !is_valid_url?
-        raise  RuntimeError, "The link you submitted is invalid"
+        raise "The link you submitted is invalid"
       end
 
       if !branch_exists?
-        raise  RuntimeError, "The submitted branch doesn't exist"
+        raise  "The submitted branch doesn't exist"
       end
 
       get_user_and_repo(url)

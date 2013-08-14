@@ -17,7 +17,11 @@ class PagesController < ApplicationController
       return
     end
 
-    @message = Engine::RepositoryService.new(params[:pages][:link], params[:pages][:branch])
+    begin
+      Engine::RepositoryService.new(params[:pages][:link], params[:pages][:branch])
+    rescue => e
+       @message = e.message
+    end
 
   end
 
