@@ -29,27 +29,22 @@ describe Engine::RepositoryService do
       @valid_response = double().as_null_object
       @valid_response.should_receive(:code).and_return(200)
       HTTParty.should_receive(:get).with(valid_url).ordered.and_return(@valid_response)
-
-
-
       expect(repo_with_valid_url.is_valid_url?).to be_eql(true)
     end
 
-    it "should return false on invalid URL" do
-      repo_with_invalid_url.stub(:branch_exists?).and_return(true)
+    it "should raise error on invalid URL" do
 
-      @invalid_response = double().as_null_object
-      @invalid_response.should_receive(:code).and_return(404)
-      HTTParty.should_receive(:get).once.with(invalid_url).and_return(@invalid_response)
-      expect(repo_with_invalid_url.is_valid_url?).to be_eql(false)
+      expect{repo_with_invalid_url}.to raise_error(RuntimeError, "The link you submitted is invalid")
     end
 
-    it "should return false on invalid github URL" do
+    it "should raise error on invalid github URL" do
+=begin
       repo_with_invalid_github_url.stub(:branch_exists?).and_return(true)
       @invalid_response = double().as_null_object
       @invalid_response.should_receive(:code).and_return(404)
       HTTParty.should_receive(:get).once.with(non_github_url).and_return(@invalid_response)
-      expect(repo_with_invalid_github_url.is_valid_url?).not_to be_eql(true)
+=end
+      expect{repo_with_invalid_github_url}.to raise_error(RuntimeError, "The link you submitted is invalid")
     end
 
   end
@@ -70,13 +65,13 @@ describe Engine::RepositoryService do
       expect(repo_with_valid_branch.branch_exists?).to be_eql(true)
     end
 
-    it "should return false on invalid branch" do
-      repo_with_invalid_branch.stub(:is_valid_url?).and_return(true)
-      branch_url = valid_url.chomp('.git') + '/branches/' + invalid_branch
-      @invalid_response = double().as_null_object
-      @invalid_response.should_receive(:code).and_return(404)
-      HTTParty.should_receive(:get).once.with(branch_url).and_return(@invalid_response)
-      expect(repo_with_invalid_branch.branch_exists?).to be_eql(false)
+    it "should raise error on invalid branch" do
+    #  repo_with_invalid_branch.stub(:is_valid_url?).and_return(true)
+    #  branch_url = valid_url.chomp('.git') + '/branches/' + invalid_branch
+    #  @invalid_response = double().as_null_object
+    #  @invalid_response.should_receive(:code).and_return(404)
+    #  HTTParty.should_receive(:get).once.with(branch_url).and_return(@invalid_response)
+      expect{repo_with_invalid_branch}.to raise_error(RuntimeError, "The submitted branch doesn't exist")
     end
 
     it "should return true on empty branch" do
@@ -94,17 +89,21 @@ describe Engine::RepositoryService do
 
   context "crop should remove .git from URLs" do
 
-    let(:url_with_dot_git) { "blabla.git" }
-    let(:url_without_dot_git) { "blabla" }
+    let(:url_with_dot_git) { "https://github.com/centralway/sourceradar.git" }
+    let(:url_without_dot_git) { "https://github.com/centralway/sourceradar" }
+    let(:repo_with_valid_url) { RepositoryService.new(valid_url, valid_branch) }
 
-    subject { RepositoryService.new(url_with_dot_git,nil) }
     it "should remove .git from the url" do
-      expect(subject.chopUrl(url_with_dot_git)).to be_eql(url_without_dot_git)
+
+      result = repo_with_valid_url.chop_url(url_with_dot_git)
+      expect(result).to eq(url_without_dot_git)
     end
 
-    subject { RepositoryService.new(url_without_dot_git,nil) }
+
     it "should not change the url without .git" do
-      expect(subject.chopUrl(url_without_dot_git)).to be_eql(url_without_dot_git)
+
+      result = repo_with_valid_url.chop_url(url_with_dot_git)
+      expect(result).to eq(url_without_dot_git)
     end
 
 

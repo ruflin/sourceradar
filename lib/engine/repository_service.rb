@@ -10,11 +10,11 @@ module Engine
       puts
       @branch = branch.to_s
       if !is_valid_url?
-        return  "The link you submitted is invalid"
+        raise  RuntimeError, "The link you submitted is invalid"
       end
 
       if !branch_exists?
-        return  "The submitted branch doesn't exist"
+        raise  RuntimeError, "The submitted branch doesn't exist"
       end
 
       get_user_and_repo(url)
@@ -33,12 +33,14 @@ module Engine
     def branch_exists?
       Rails.logger.debug("url:" + @url )
       Rails.logger.debug("branch:" + @branch )
-      url_chopped = chopUrl(@url)
+      url_chopped = chop_url(@url)
       HTTParty.get(url_chopped+"/branches/"+@branch).code == 200  #if the branch is "" it still gives 200
     end
 
-    def chopUrl(url)
+    def chop_url(url)
+
       url.chomp(".git")
+
     end
 
      # [https:][][github.com][balgan][scan-tools]
@@ -47,7 +49,7 @@ module Engine
       user_position_in_url = 3
       repository_position_in_url = 4
 
-      url_chopped = chopUrl(url)
+      url_chopped = chop_url(url)
       url_splitted = url_chopped.split('/')
 
 
