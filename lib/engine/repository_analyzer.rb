@@ -1,3 +1,4 @@
+require 'ripper'
 
 module Engine
   class RepositoryAnalyzer
@@ -19,6 +20,12 @@ module Engine
         end
       end
       ruby_files
+    end
+
+    def analyze_ruby_file(file_name)
+      tokens = Ripper.lex(File.read(file_name))
+      tokens.delete_if { |token| token[1] != :on_ident }
+      tokens.map { |token| token[2] }
     end
   end
 end
