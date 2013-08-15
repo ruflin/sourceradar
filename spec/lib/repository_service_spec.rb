@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'engine'
+require 'ostruct'
 
 include Engine
 describe Engine::RepositoryService do
@@ -8,8 +9,11 @@ describe Engine::RepositoryService do
 
   let(:empty_url) { nil }
   let(:non_github_url) { "blalalaal" }
-  let(:invalid_url) { "https://github.com/centralway/whoopwhoop" }
-  let(:valid_url) { "https://github.com/centralway/sourceradar.git" }
+  let(:username) { "centralway" }
+  let(:valid_repo_name) { "sourceradar" }
+  let(:invalid_repo_name) { "skfhjsldjfsldkjf" }
+  let(:invalid_url) { "https://github.com/#{username}/#{invalid_repo_name}.git" }
+  let(:valid_url) { "https://github.com/#{username}/#{valid_repo_name}.git" }
   let(:valid_branch) { "development" }
   let(:invalid_branch) { "thisdoesntexistdude" }
 
@@ -62,14 +66,26 @@ describe Engine::RepositoryService do
 
     it "should return true on valid branch" do
 
+      branch_url =  "https://api.github.com/repos/#{username}/#{valid_repo_name}/branches"
+
+      @valid_response = OpenStruct.new(:body => '[
+          {
+          "name": "' + valid_branch + '",
+          "commit": {
+            "sha": "30e2534c4e756a27583111f3d372850b62a1c844",
+            "url": "https://api.github.com/repos/centralway/sourceradar/commits/30e2534c4e756a27583111f3d372850b62a1c844"
+          }
+        }
+      ]')
+
+      HTTParty.should_receive(:get).once.ordered.with(valid_url).and_return(OpenStruct.new(:code => 200))
+      HTTParty.should_receive(:get).twice.ordered.with(branch_url).and_return(@valid_response)
+
+      #TODO: Remove the left-over call to the REAL Github API here. :(
       repo_with_valid_branch.stub(:is_valid_url?).and_return(true)
-      branch_url = valid_url.chomp('.git') + '/branches/'
+      repo_with_valid_branch.get_user_and_repo(valid_url)
 
-      @valid_response = double().as_null_object
-      @valid_response.should_receive(:code).and_return(200)
-      HTTParty.should_receive(:get).once.with(branch_url).and_return(@valid_response)
-
-      expect(repo_with_valid_branch.branch_exists?).to be_eql(true)
+      expect(repo_with_valid_branch.branch_exists?).to be_true
     end
 
     it "should raise error on invalid branch" do
@@ -82,11 +98,14 @@ describe Engine::RepositoryService do
     end
 
     it "should not raise exception from HTTParty" do
-      repo_with_empty_branch.stub(:is_valid_url?).and_return(true)
+      repo_with_valid_branch.stub(:is_valid_url?).and_return(true)
+      repo_with_valid_branch.stub(:branch_exists?).once.ordered.and_return(true)
+      repo_with_valid_branch.stub(:send_to_engine).with(any_args)
+
+      HTTParty.stub(:get).and_raise("OH MY GOD!")
+
       branch_url = valid_url.chomp('.git') + '/branches/'
-      repo_with_empty_branch.stub(:send_to_engine).with(any_args)
-      http_mock = HTTParty.stub(:get).and_raise("OH MY GOD!")
-      expect(repo_with_empty_branch.branch_exists?).not_to raise_error
+      expect(repo_with_valid_branch.branch_exists?).not_to raise_error
     end
 
     it "should return false on exception from HTTParty" do
@@ -99,6 +118,11 @@ describe Engine::RepositoryService do
 
   end
 
+  describe "get_user_and_repo" do
+    it "should ... you know. HAVE TESTS" do
+      pending "WHOAH!"
+    end
+  end
 
 
   context "crop should remove .git from URLs" do

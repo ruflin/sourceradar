@@ -42,6 +42,9 @@ module Engine
     def clone!()
       url = 'https://github.com/'+@user+'/'+@repository+'.git'
       @repo.clone({:branch => @branch}, url , @working_dir)
+
+      #TODO Remove this when we have a nice report to show
+      #raise "Success! It's cloned and everything!"
     end
 
 

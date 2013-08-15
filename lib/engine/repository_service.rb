@@ -13,11 +13,12 @@ module Engine
         raise "The link you submitted is invalid"
       end
 
+      get_user_and_repo(url)
+
       if !branch_exists?
         raise  "The submitted branch doesn't exist"
       end
 
-      get_user_and_repo(url)
       send_to_engine(@user,@repository,branch)
 
       #return 'Analysis for repository '+@repository+ ' in the '+ @branch +'branch.'
@@ -33,8 +34,12 @@ module Engine
     def branch_exists?
       Rails.logger.debug("url:" + @url )
       Rails.logger.debug("branch:" + @branch )
-      url_chopped = chop_url(@url)
-      HTTParty.get(url_chopped+"/branches/"+@branch).code == 200  #if the branch is "" it still gives 200
+      api_url = "https://api.github.com/repos/#{@user}/#{@repository}/branches"
+      branches = JSON(HTTParty.get(api_url).body)  #if the branch is "" it still gives 200
+      branches.each do |branch|
+        return true if branch['name'] == @branch
+      end
+      return @branch.blank? || @branch.nil?
     rescue => e
       false
     end

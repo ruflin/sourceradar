@@ -46,14 +46,6 @@ describe Engine::RepositoryCloner do
     Grit::Git.should_receive(:new).with(any_args()).and_return(grit_stub)
 
     Engine::RepositoryCloner.new(user, repository, blank_branch)
-
-  end
-
-
-  it "should show the number of files in the working directory" do
-
-    expect(Engine::RepositoryCloner.new(user,repository, valid_branch).repo_size).to be >= 0
-
   end
 
 end
