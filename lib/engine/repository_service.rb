@@ -7,19 +7,11 @@ module Engine
 
     def initialize(url, branch = "")
       @url = url
-      puts
       @branch = branch.to_s
-      if !is_valid_url?
-        raise "The link you submitted is invalid"
-      end
 
       get_user_and_repo(url)
 
-      if !branch_exists?
-        raise  "The submitted branch doesn't exist"
-      end
-
-      send_to_engine(@user,@repository,branch)
+      #send_to_engine(@user,@repository,branch)
 
       #return 'Analysis for repository '+@repository+ ' in the '+ @branch +'branch.'
     end
@@ -28,7 +20,17 @@ module Engine
       HTTParty.get(@url).code == 200
 
     rescue => e
+      false
+    end
 
+    def is_ok?
+      if !is_valid_url?
+        raise "The link you submitted is invalid"
+      end
+
+      if !branch_exists?
+        raise  "The submitted branch doesn't exist"
+      end
     end
 
     def branch_exists?
@@ -66,8 +68,8 @@ module Engine
     end
 
 
-    def send_to_engine(user, repository, branch)
-      Engine::RepositoryCloner.new(user, repository,branch)
+    def send_to_engine
+      Engine::RepositoryCloner.new(@user, @repository, @branch)
     end
 
 
