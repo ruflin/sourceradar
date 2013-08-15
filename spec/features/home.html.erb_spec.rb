@@ -27,8 +27,9 @@ describe "Home page", :type => :feature do
       page.should have_content("The submitted branch doesn't exist")
     end
 
-
-
+    it "should tell about success if everything worked" do
+      pending "Yeah, find some nice words to tell the user we rock"
+    end
   end
 
 end

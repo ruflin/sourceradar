@@ -18,7 +18,11 @@ class PagesController < ApplicationController
     end
 
     begin
-      Engine::RepositoryService.new(params[:pages][:link], params[:pages][:branch])
+      engine_service = Engine::RepositoryService.new(params[:pages][:link], params[:pages][:branch])
+      if engine_service.is_ok?
+        engine_service.send_to_engine
+      end
+
     rescue => e
        @message = e.message
     end
