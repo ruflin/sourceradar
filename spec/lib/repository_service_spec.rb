@@ -130,8 +130,22 @@ describe Engine::RepositoryService do
   end
 
   describe "get_user_and_repo" do
-    it "should ... you know. HAVE TESTS" do
-      pending "WHOAH!"
+
+    let(:repo_with_valid_url) { RepositoryService.new(valid_url, valid_branch) }
+    let(:repo_with_invalid_url) { RepositoryService.new(invalid_url, valid_branch) }
+
+    it "should get the correct user with valid url" do
+
+      expect(repo_with_valid_url.user).to be_eql(username)
+    end
+
+    it "should get the correct repository with valid url" do
+      expect(repo_with_valid_url.repo).to be_eql(valid_repo_name)
+
+    end
+
+    it "should get raise an exception with invalid url" do
+      pending "how to make this test?"
     end
   end
 
