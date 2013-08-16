@@ -1,4 +1,11 @@
+require 'engine'
+
 class PagesController < ApplicationController
+
+  include Engine
+
+
+
   def home
   end
 
@@ -6,27 +13,20 @@ class PagesController < ApplicationController
 
     if params[:pages].nil? ||  params[:pages][:link].blank?
       @message = "Please provide a URL"
-      @branch = ""
+
       return
     end
 
-    repository_svc = RepositoryService.new(params[:pages][:link], params[:pages][:branch])
+    begin
+      engine_service = Engine::RepositoryService.new(params[:pages][:link], params[:pages][:branch])
+      if engine_service.is_ok?
+        engine_service.send_to_engine
+      end
 
-    if repository_svc.is_valid_url?
-      @message = "Analising repository"
-    else
-      @message = "The link you submitted is invalid"
-      return
+    rescue => e
+       @message = e.message
     end
 
-    @branch = "default"
-
-    if !repository_svc.branch_exists?
-      @message = "The submitted branch doesn't exist"
-      @branch = ""
-    else
-      @branch = params[:pages][:branch] unless params[:pages][:branch].blank?
-    end
   end
 
 
