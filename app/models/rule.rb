@@ -1,6 +1,10 @@
 class Rule < ActiveRecord::Base
-  attr_accessible :description, :expression, :businessnote, :technicalnote
+  belongs_to :language
 
-  validates :expression, presence: true, uniqueness: true
-  validates :description, presence: true
+  attr_accessible :expression, :businessnote, :technicalnote, :language_id
+
+  validates :expression, presence: true, uniqueness: { scope: :language_id }
+  validates :businessnote, presence: true
+  validates :technicalnote, presence: true
+  validates :language_id, presence: true
 end
