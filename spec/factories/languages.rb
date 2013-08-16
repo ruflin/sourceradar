@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :language do
-    name ""
-    file_extension ""
+    name "Ruby"
+    file_extension "rb"
   end
 end
