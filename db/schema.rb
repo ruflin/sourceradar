@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130816121106) do
+ActiveRecord::Schema.define(:version => 20130816122810) do
 
   create_table "languages", :force => true do |t|
     t.string   "name"
@@ -27,6 +27,13 @@ ActiveRecord::Schema.define(:version => 20130816121106) do
     t.string   "technicalnote"
     t.string   "businessnote"
     t.integer  "language_id"
+  end
+
+  create_table "vulnerability_impacts", :force => true do |t|
+    t.string   "type"
+    t.integer  "time_to_be_fixed"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
   end
 
 end
