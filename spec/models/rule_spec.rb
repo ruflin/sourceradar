@@ -5,7 +5,8 @@ describe Rule do
   context "when creating a rule" do
 
     let(:language) { FactoryGirl.create(:language) }
-    let(:valid_params) { { expression: "test", businessnote: "test", technicalnote:"test", language_id: language.id } }
+    let(:vulnerability_impact) { FactoryGirl.create(:vulnerability_impact) }
+    let(:valid_params) { { expression: "test", businessnote: "test", technicalnote:"test", language_id: language.id, vulnerability_impact_id: vulnerability_impact.id } }
 
     it "needs the required fields" do
       parameters = valid_params
