@@ -1,8 +1,8 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
-  factory :vulnerability_impact do
+  factory :type_of_rule do
     type "critical"
-    time_to_be_fixed 1
+
   end
 end

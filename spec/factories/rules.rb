@@ -1,14 +1,6 @@
 FactoryGirl.define do
   factory :rule do
 
-=begin
-    before(:create) do
-      FactoryGirl.create(:language, :name=> 'Java', :file_extension=>'java')
-      FactoryGirl.create(:vulnerability_impact, :type=>'low')
-
-      end
-=end
-
     expression "test"
     businessnote "test businessnote"
     technicalnote "test technicalnote"
@@ -17,7 +9,7 @@ FactoryGirl.define do
 
     #TODO: Write a strongly-worded letter to the FactoryGirl creator. THE GOD DAMN FUCKHEAD!
     language_id 0
-    vulnerability_impact_id 0
+    type_of_rule_id 0
 
 
 
