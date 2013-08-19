@@ -23,7 +23,8 @@ describe RulesController do
   # This should return the minimal set of attributes required to create a valid
   # Rule. As you add validations to Rule, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) { { expression: "test", description: "test"} }
+  # Also noteworthy: Everything here is a string, because it comes from a form submitted by the user. That turns everything into a string
+  let(:valid_attributes) { { expression: "test", businessnote: "test", technicalnote:"test", language_id:"1", vulnerability_impact_id:"1"} }
   let(:invalid_attributes) { { description: "test"} }
 
   # This should return the minimal set of values that should be in the session
