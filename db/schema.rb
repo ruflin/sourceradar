@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130816122810) do
+ActiveRecord::Schema.define(:version => 20130819110408) do
 
   create_table "languages", :force => true do |t|
     t.string   "name"
@@ -22,11 +22,23 @@ ActiveRecord::Schema.define(:version => 20130816122810) do
 
   create_table "rules", :force => true do |t|
     t.string   "expression"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
     t.string   "technicalnote"
     t.string   "businessnote"
     t.integer  "language_id"
+    t.integer  "vulnerability_impact_id"
+  end
+
+  create_table "vulnerabilities", :force => true do |t|
+    t.string   "file"
+    t.integer  "loc"
+    t.string   "who_commited_it"
+    t.integer  "points"
+    t.string   "description"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.integer  "rule_id"
   end
 
   create_table "vulnerability_impacts", :force => true do |t|
