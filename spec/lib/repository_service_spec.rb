@@ -22,53 +22,66 @@ describe Engine::RepositoryService do
 
   describe "is_valid_url?" do
 
-  #  let(:repo_with_valid_url) { RepositoryService.new(valid_url, valid_branch) }
+    let(:repo_with_valid_url) { RepositoryService.new(valid_url, valid_branch) }
     let(:repo_with_invalid_url) { RepositoryService.new(invalid_url, valid_branch) }
-    let(:repo_with_invalid_github_url) { RepositoryService.new(non_github_url, nil) }
 
     it "should return true on valid URL" do
-
-      repo_with_valid_url = RepositoryService.new(valid_url, valid_branch)
-
-      repo_with_valid_url.stub(:branch_exists?).and_return(true)
+      HTTParty.stub(:get).and_return(OpenStruct.new(:code => 200))
       repo_with_valid_url.stub(:send_to_engine).with(any_args)
-
-
-
-      @valid_response = double().as_null_object
-      @valid_response.should_receive(:code).and_return(200)
-      HTTParty.should_receive(:get).with(valid_url).ordered.and_return(@valid_response)
       expect(repo_with_valid_url.is_valid_url?).to be_eql(true)
     end
 
-    it "should raise error on invalid URL" do
-
-      expect{repo_with_invalid_url}.to raise_error("The link you submitted is invalid")
-    end
-
-    it "should raise error on invalid github URL" do
-=begin
-      repo_with_invalid_github_url.stub(:branch_exists?).and_return(true)
-      @invalid_response = double().as_null_object
-      @invalid_response.should_receive(:code).and_return(404)
-      HTTParty.should_receive(:get).once.with(non_github_url).and_return(@invalid_response)
-=end
-      expect{repo_with_invalid_github_url}.to raise_error("The link you submitted is invalid")
+    it "should return false on valid URL" do
+      HTTParty.stub(:get).and_return(OpenStruct.new(:code => 404))
+      repo_with_invalid_url.stub(:send_to_engine).with(any_args)
+      expect(repo_with_invalid_url.is_valid_url?).to be_eql(false)
     end
 
   end
+
+  describe "is_ok?" do
+
+    let(:repo_with_valid_url) { RepositoryService.new(valid_url, valid_branch) }
+    let(:repo_with_invalid_url) { RepositoryService.new(invalid_url, valid_branch) }
+    let(:repo_with_invalid_branch) { RepositoryService.new(valid_url, invalid_branch) }
+    let(:repo_with_invalid_github_url) { RepositoryService.new(non_github_url, nil) }
+
+    before do
+      repo_with_valid_url.stub(:branch_exists?).and_return(true)
+      repo_with_valid_url.stub(:is_valid_url?).and_return(true)
+
+      repo_with_invalid_url.stub(:branch_exists?).and_return(true)
+      repo_with_invalid_url.stub(:is_valid_url?).and_return(false)
+
+      repo_with_invalid_github_url.stub(:branch_exists?).and_return(true)
+      repo_with_invalid_github_url.stub(:is_valid_url?).and_return(false)
+    end
+
+    it "should return true on valid URL and branch" do
+      expect{repo_with_valid_url.is_ok?}.to be_true
+    end
+
+    it "should raise on invalid branch" do
+      expect{repo_with_invalid_branch.is_ok?}.to raise_error("The submitted branch doesn't exist")
+    end
+
+    it "should raise error on invalid URL" do
+      expect{repo_with_invalid_url.is_ok?}.to raise_error("The link you submitted is invalid")
+    end
+
+    it "should raise error on invalid github URL" do
+      expect{repo_with_invalid_github_url.is_ok?}.to raise_error("The link you submitted is invalid")
+    end
+  end
+
 
   describe "branch_exists?" do
 
     let(:repo_with_valid_branch) { RepositoryService.new(valid_url, valid_branch) }
     let(:repo_with_invalid_branch) { RepositoryService.new(valid_url, invalid_branch) }
     let(:repo_with_empty_branch) { RepositoryService.new(valid_url, nil) }
-
-    it "should return true on valid branch" do
-
-      branch_url =  "https://api.github.com/repos/#{username}/#{valid_repo_name}/branches"
-
-      @valid_response = OpenStruct.new(:body => '[
+    let(:api_response) do
+      OpenStruct.new(:body => '[
           {
           "name": "' + valid_branch + '",
           "commit": {
@@ -77,24 +90,22 @@ describe Engine::RepositoryService do
           }
         }
       ]')
+    end
 
-      HTTParty.should_receive(:get).once.ordered.with(valid_url).and_return(OpenStruct.new(:code => 200))
-      HTTParty.should_receive(:get).twice.ordered.with(branch_url).and_return(@valid_response)
+    it "should return true on valid branch" do
 
-      #TODO: Remove the left-over call to the REAL Github API here. :(
-      repo_with_valid_branch.stub(:is_valid_url?).and_return(true)
+      branch_url =  "https://api.github.com/repos/#{username}/#{valid_repo_name}/branches"
+
+      HTTParty.should_receive(:get).once.with(branch_url).and_return(api_response)
       repo_with_valid_branch.get_user_and_repo(valid_url)
-
       expect(repo_with_valid_branch.branch_exists?).to be_true
     end
 
-    it "should raise error on invalid branch" do
-    #  repo_with_invalid_branch.stub(:is_valid_url?).and_return(true)
-    #  branch_url = valid_url.chomp('.git') + '/branches/' + invalid_branch
-    #  @invalid_response = double().as_null_object
-    #  @invalid_response.should_receive(:code).and_return(404)
-    #  HTTParty.should_receive(:get).once.with(branch_url).and_return(@invalid_response)
-      expect{repo_with_invalid_branch}.to raise_error("The submitted branch doesn't exist")
+    it "should return false on invalid branch" do
+      branch_url =  "https://api.github.com/repos/#{username}/#{valid_repo_name}/branches"
+      HTTParty.should_receive(:get).once.with(branch_url).and_return(api_response)
+      repo_with_valid_branch.get_user_and_repo(valid_url)
+      expect(repo_with_invalid_branch.branch_exists?).to be_false
     end
 
     it "should not raise exception from HTTParty" do
@@ -119,8 +130,22 @@ describe Engine::RepositoryService do
   end
 
   describe "get_user_and_repo" do
-    it "should ... you know. HAVE TESTS" do
-      pending "WHOAH!"
+
+    let(:repo_with_valid_url) { RepositoryService.new(valid_url, valid_branch) }
+    let(:repo_with_invalid_url) { RepositoryService.new(invalid_url, valid_branch) }
+
+    it "should get the correct user with valid url" do
+
+      expect(repo_with_valid_url.user).to be_eql(username)
+    end
+
+    it "should get the correct repository with valid url" do
+      expect(repo_with_valid_url.repo).to be_eql(valid_repo_name)
+
+    end
+
+    it "should get raise an exception with invalid url" do
+      pending "how to make this test?"
     end
   end
 
@@ -160,7 +185,7 @@ describe Engine::RepositoryService do
 
       RepositoryCloner.stub(:new).with(any_args).and_return(anything)
 
-      repo_cloner = repo_with_valid_url.send_to_engine(user, repository, valid_branch)
+      repo_cloner = repo_with_valid_url.send_to_engine
 
       expect(repo_cloner).not_to be_nil
     end
@@ -169,7 +194,7 @@ describe Engine::RepositoryService do
 
       RepositoryCloner.stub(:new).with(any_args).and_return(anything)
 
-      repo_cloner = repo_with_valid_url.send_to_engine(user, repository, nil)
+      repo_cloner = repo_with_valid_url.send_to_engine
 
       expect(repo_cloner).not_to be_nil
     end
