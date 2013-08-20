@@ -23,7 +23,7 @@ module Engine
       clone!()
 
       #send instance to analysis
-
+     # analizer = Engine::RepositoryAnalizer.new(@working_dir)
 
     end
 

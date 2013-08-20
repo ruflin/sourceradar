@@ -67,6 +67,14 @@ module Engine
 
     end
 
+    def user
+      @user
+    end
+
+    def repo
+      @repository
+    end
+
 
     def send_to_engine
       Engine::RepositoryCloner.new(@user, @repository, @branch)
