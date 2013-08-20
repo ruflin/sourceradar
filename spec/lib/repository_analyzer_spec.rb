@@ -1,6 +1,6 @@
-require 'rspec'
+require 'spec_helper'
 require 'engine'
-require 'json'
+
 
 describe 'RepositoryAnalyzer' do
 
@@ -10,6 +10,8 @@ describe 'RepositoryAnalyzer' do
   let(:analyzer) { Engine::RepositoryAnalyzer.new(path) }
   let(:dir_content) { ['file1.rb', 'subdir/file2.rb', 'file3.txt'] }
   let(:dir_content_with_only_ruby_files) { ['file1.rb', 'subdir/file2.rb'] }
+  let(:collection) { Vulnerability.all }
+
 
   describe "get_directory_contents" do
 
@@ -38,49 +40,10 @@ describe 'RepositoryAnalyzer' do
   describe "analyse working dir"  do
 
     let(:dir_content) { ['spec/fixtures/test_ripper.rb'] }
-    let(:result) { ['spec/fixtures/test_ripper.rb', ["some_func", "result", "swapcase!", "puts", "result"]] }
-    let(:report) do
-      {
-        project_name: "test project",
-        vulnerabilities: [
-          {
-            token: "some_func",
-            line: 1,
-            column: 5,
-            file_name: "spec/fixtures/test_ripper.rb"
-          },
-          {
-              token: "result",
-              line: 2,
-              column: 2,
-              file_name: "spec/fixtures/test_ripper.rb"
-          },
-          {
-            token: "swapcase!",
-            line: 2,
-            column: 18,
-            file_name: "spec/fixtures/test_ripper.rb"
-          },
-          {
-              token: "puts",
-              line: 3,
-              column: 2,
-              file_name: "spec/fixtures/test_ripper.rb"
-          },
-          {
-              token: "result",
-              line: 3,
-              column: 7,
-              file_name: "spec/fixtures/test_ripper.rb"
-          },
-        ]
-      }
-    end
 
-    it "should return the tokens in JSON format " do
+    it "should save the vulnerabilities to the database" do
       Dir.stub(:glob).with(path+"/**/*").and_return(dir_content)
-      result = puts report.to_json
-     expect(analyzer.analyze_working_dir).to be_eql(result)
+      expect{analyzer.analyze_working_dir}.to change{Vulnerability.count}.by(1)
     end
   end
 

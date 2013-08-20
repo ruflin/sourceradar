@@ -6,13 +6,11 @@ describe "rules/index" do
     assign(:rules, [
       stub_model(Rule,
         :expression => "",
-        :description => "Description",
         :technicalnote => "Tech note",
         :businessnote => "Biz note"
       ),
       stub_model(Rule,
         :expression => "",
-        :description => "Description",
         :technicalnote => "Tech note",
         :businessnote => "Biz note"
       )
@@ -24,6 +22,5 @@ describe "rules/index" do
     # Run the generator again with the --webrat flag if you want to use webrat matchers
     assert_select "tr>td", :text => "".to_s, :count => 2
     assert_select "tr>td", :text => "".to_s, :count => 2
-    assert_select "tr>td", :text => "Description".to_s, :count => 2
   end
 end

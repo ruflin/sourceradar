@@ -36,7 +36,7 @@ describe RulesController do
     it "assigns all rules as @rules" do
       rule = Rule.create! valid_attributes
       get :index, {}, valid_session
-      assigns(:rules).should eq([rule])
+      assigns(:rules).should eq(Rule.all)
     end
   end
 
