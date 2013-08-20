@@ -15,6 +15,7 @@ group :development, :test do
   gem 'guard-rspec', '3.0.2'
   gem 'rb-fsevent', '0.9.3'
   gem 'simplecov', '0.7.1'
+  gem 'coveralls', require: false
 end
 
 # Gems used only for assets and not required
