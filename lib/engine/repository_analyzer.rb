@@ -33,20 +33,22 @@ module Engine
 
     def analyze_working_dir
       ruby_files = get_ruby_files("rb") #Todo refactor this to other languages
-      result = {}
-      vuln = []
 
       puts ruby_files.to_s
       ruby_files.each do |file|
           tokens = analyze_ruby_file(file)
           tokens.each do |token|
-            vuln << {token: "#{token[2]}", line:token[0][0], column:token[0][1], file_name:file}
+            match = Rule.find_by_expression token[2]
+            puts token[2] + ' vs ' + match.nil?.to_s
+
+            if !match.nil?
+              Vulnerability.create(file: file, loc:token[0][0], rule_id: match.id )
+
+            end
           end
       end
-    result = { project_name:"test_project", vulnerabilities: vuln }
-      htj = result.to_json
-    puts htj
-    htj
+
+
     end
 
   end

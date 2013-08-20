@@ -3,7 +3,6 @@
 <table>
   <tr>
     <th>Keyword</th>
-    <th>Description</th>
     <th>Technicalnote</th>
     <th>Businessnote</th>
     <th></th>
@@ -12,7 +11,6 @@
 <% @rules.each do |rule| %>
   <tr>
     <td><%= rule.expression %></td>
-    <td><%= rule.description %></td>
     <td><%= rule.technicalnote %></td>
     <td><%= rule.businessnote %></td>
     <td><%= link_to 'Show', rule %></td>
